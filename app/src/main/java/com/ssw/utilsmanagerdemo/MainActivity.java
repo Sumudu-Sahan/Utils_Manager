@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
         textView = findViewById(R.id.textView);
 
         getAppVersion();
-        verifyBiometrics();
     }
 
     // <editor-fold defaultstate="collapsed" desc="App Manager">
