@@ -1,0 +1,2 @@
+include ':app', ':commonutilsmanager'
+rootProject.name='UtilsManagerDemo'
