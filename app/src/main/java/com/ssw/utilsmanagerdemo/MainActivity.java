@@ -10,9 +10,8 @@ import com.ssw.commonutilsmanager.app.AppManager;
 import com.ssw.commonutilsmanager.calendar.CalendarUtilsManager;
 import com.ssw.commonutilsmanager.credit_cards.CardNumberValidations;
 import com.ssw.commonutilsmanager.currencyamounts.AmountManager;
-import com.ssw.commonutilsmanager.device.DeviceManager;
 import com.ssw.commonutilsmanager.email.EmailManager;
-import com.ssw.commonutilsmanager.fingerprint.FingerPrintAuthenticationHandler;
+import com.ssw.commonutilsmanager.fingerprint.BiometricAuthenticationHandler;
 import com.ssw.commonutilsmanager.mobile.MobileManager;
 import com.ssw.commonutilsmanager.network.NetworkManager;
 import com.ssw.commonutilsmanager.nic.NICManager;
@@ -34,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void initComponents() {
         textView = findViewById(R.id.textView);
+
+        getAppVersion();
+        verifyBiometrics();
     }
 
     // <editor-fold defaultstate="collapsed" desc="App Manager">
@@ -46,30 +48,26 @@ public class MainActivity extends AppCompatActivity {
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Finger Print Handler">
-    private void verifyFingerPrints() {
-        if (DeviceManager.getInstance().isFingerPrintAvailable(this) && DeviceManager.getInstance().hasEnrolledFingerprints(this)) {
-            FingerPrintAuthenticationHandler fingerPrintAuthenticationHandler = new FingerPrintAuthenticationHandler(this, new FingerPrintAuthenticationHandler.FingerPrintAuthenticationHandlerEvents() {
-                @Override
-                public void onAuthenticationSuccess() {
-                    ToastManager.getInstance().showTopToast(MainActivity.this, "Authentication Success", ToastManager.TOP_DURATION_LONG);
-                }
+    // <editor-fold defaultstate="collapsed" desc="Finger Print and Face ID Handler">
+    private void verifyBiometrics() {
+        BiometricAuthenticationHandler biometricAuthenticationHandler = new BiometricAuthenticationHandler(this, new BiometricAuthenticationHandler.BiometricAuthenticationHandlerEvents() {
+            @Override
+            public void onAuthenticationSuccess() {
+                ToastManager.getInstance().showTopToast(MainActivity.this, "Authentication Success", ToastManager.TOP_DURATION_LONG);
+            }
 
-                @Override
-                public void onAuthenticationFailed() {
-                    ToastManager.getInstance().showTopToast(MainActivity.this, "Authentication Failed", ToastManager.TOP_DURATION_LONG);
-                }
+            @Override
+            public void onAuthenticationFailed() {
+                ToastManager.getInstance().showTopToast(MainActivity.this, "Authentication Failed", ToastManager.TOP_DURATION_LONG);
+            }
 
-                @Override
-                public void onAuthenticationCancelled() {
-                    ToastManager.getInstance().showTopToast(MainActivity.this, "Authentication Cancelled", ToastManager.TOP_DURATION_LONG);
-                }
-            });
+            @Override
+            public void onAuthenticationCancelled() {
+                ToastManager.getInstance().showTopToast(MainActivity.this, "Authentication Cancelled", ToastManager.TOP_DURATION_LONG);
+            }
+        });
 
-            fingerPrintAuthenticationHandler.startAuthentication("Title", "SubTitle", "Description", "BTNTEXT", R.mipmap.ic_launcher);
-        } else {
-            ToastManager.getInstance().showTopToast(this, "Fingerprint Not Support", ToastManager.TOAST_LENGTH_LONG);
-        }
+        biometricAuthenticationHandler.startAuthentication("Title", "SubTitle", "Description", "BTNTEXT", R.mipmap.ic_launcher);
     }
     // </editor-fold>
 
