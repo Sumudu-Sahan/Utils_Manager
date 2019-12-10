@@ -25,8 +25,8 @@ import static android.content.Context.KEYGUARD_SERVICE;
 import static com.ssw.commonutilsmanager.common.ConstantList.DEV_MODE;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
-public class FingerprintHandler extends FingerprintManager.AuthenticationCallback {
-    private static final String TAG = "FingerprintHandler";
+public class BiometricHandler extends FingerprintManager.AuthenticationCallback {
+    private static final String TAG = "BiometricHandler";
 
     private FragmentActivity fragmentActivity;
 
@@ -34,9 +34,9 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
     private KeyStore keyStore;
     private static final String KEY_NAME = "frimi";
 
-    private FingerprintHandlerEvents fingerprintHandlerEvents;
+    private BiometricHandlerEvents biometricHandlerEvents;
 
-    public interface FingerprintHandlerEvents {
+    public interface BiometricHandlerEvents {
         void onAuthSuccess();
 
         void onAuthFailed();
@@ -44,28 +44,27 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
         void onAuthCancelled();
     }
 
-    FingerprintHandler(FragmentActivity fragmentActivity, FingerprintHandlerEvents fingerprintHandlerEvents) {
+    BiometricHandler(FragmentActivity fragmentActivity, BiometricHandlerEvents biometricHandlerEvents) {
         this.fragmentActivity = fragmentActivity;
-        this.fingerprintHandlerEvents = fingerprintHandlerEvents;
+        this.biometricHandlerEvents = biometricHandlerEvents;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     void fingerPrintInit() {
         KeyguardManager keyguardManager = (KeyguardManager) fragmentActivity.getSystemService(KEYGUARD_SERVICE);
         FingerprintManager fingerprintManager = (FingerprintManager) fragmentActivity.getSystemService(FINGERPRINT_SERVICE);
-
         try {
             if (!fingerprintManager.isHardwareDetected()) {
-                fingerprintHandlerEvents.onAuthFailed();
+                biometricHandlerEvents.onAuthFailed();
             } else {
                 if (ActivityCompat.checkSelfPermission(fragmentActivity, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
-                    fingerprintHandlerEvents.onAuthFailed();
+                    biometricHandlerEvents.onAuthFailed();
                 } else {
                     if (!fingerprintManager.hasEnrolledFingerprints()) {
-                        fingerprintHandlerEvents.onAuthFailed();
+                        biometricHandlerEvents.onAuthFailed();
                     } else {
                         if (!keyguardManager.isKeyguardSecure()) {
-                            fingerprintHandlerEvents.onAuthFailed();
+                            biometricHandlerEvents.onAuthFailed();
                         } else {
                             generateKey();
                             if (cipherInit()) {
@@ -77,7 +76,7 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
                 }
             }
         } catch (Exception e) {
-            fingerprintHandlerEvents.onAuthFailed();
+            biometricHandlerEvents.onAuthFailed();
             if (DEV_MODE) {
                 e.printStackTrace();
             }
@@ -146,24 +145,24 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
 
     @Override
     public void onAuthenticationError(int errMsgId, CharSequence errString) {
-        fingerprintHandlerEvents.onAuthCancelled();
+        biometricHandlerEvents.onAuthCancelled();
     }
 
 
     @Override
     public void onAuthenticationHelp(int helpMsgId, CharSequence helpString) {
-        fingerprintHandlerEvents.onAuthFailed();
+        biometricHandlerEvents.onAuthFailed();
     }
 
     @Override
     public void onAuthenticationFailed() {
-        fingerprintHandlerEvents.onAuthFailed();
+        biometricHandlerEvents.onAuthFailed();
     }
 
 
     @Override
     public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
-        fingerprintHandlerEvents.onAuthSuccess();
+        biometricHandlerEvents.onAuthSuccess();
     }
 
 }

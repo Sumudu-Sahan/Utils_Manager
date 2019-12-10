@@ -15,6 +15,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
@@ -27,14 +28,14 @@ import java.util.concurrent.Executors;
 
 import static android.content.Context.VIBRATOR_SERVICE;
 
-public class FingerPrintAuthenticationHandler {
-    private static final String TAG = "FingerPrintAuthenticationHandler";
+public class BiometricAuthenticationHandler {
+    private static final String TAG = "BiometricAuthenticationHandler";
 
     private FragmentActivity fragmentActivity;
-    private FingerPrintAuthenticationHandlerEvents fingerPrintAuthenticationHandlerEvents;
+    private BiometricAuthenticationHandlerEvents biometricAuthenticationHandlerEvents;
 
     //Old Android Versions
-    private FingerprintHandler fingerprintHandler;
+    private BiometricHandler fingerprintHandler;
     private Dialog alertDialog;
     private Vibrator vibrator;
 
@@ -43,16 +44,26 @@ public class FingerPrintAuthenticationHandler {
     private BiometricPrompt myBiometricPrompt;
     private BiometricPrompt.PromptInfo promptInfo;
 
-    public FingerPrintAuthenticationHandler(FragmentActivity fragmentActivity, FingerPrintAuthenticationHandlerEvents fingerPrintAuthenticationHandlerEvents) {
+    public BiometricAuthenticationHandler(FragmentActivity fragmentActivity, BiometricAuthenticationHandlerEvents biometricAuthenticationHandlerEvents) {
         this.fragmentActivity = fragmentActivity;
-        this.fingerPrintAuthenticationHandlerEvents = fingerPrintAuthenticationHandlerEvents;
+        this.biometricAuthenticationHandlerEvents = biometricAuthenticationHandlerEvents;
     }
 
     public void startAuthentication(String title, String subtitle, String description, String negativeButtonText, int logo) {
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            authenticateWithNewAPI(title, subtitle, description, negativeButtonText);
-        } else if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            authenticateWithOldAPI(description, negativeButtonText, logo);
+        BiometricManager biometricManager = BiometricManager.from(fragmentActivity);
+        switch (biometricManager.canAuthenticate()) {
+            case BiometricManager.BIOMETRIC_SUCCESS:
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    authenticateWithNewAPI(title, subtitle, description, negativeButtonText);
+                } else if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    authenticateWithOldAPI(description, negativeButtonText, logo);
+                }
+                break;
+            case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
+            case BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED:
+            case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
+                biometricAuthenticationHandlerEvents.onAuthenticationFailed();
+                break;
         }
     }
 
@@ -79,7 +90,7 @@ public class FingerPrintAuthenticationHandler {
         mcvCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fingerPrintAuthenticationHandlerEvents.onAuthenticationCancelled();
+                biometricAuthenticationHandlerEvents.onAuthenticationCancelled();
                 alertDialog.dismiss();
             }
         });
@@ -92,7 +103,7 @@ public class FingerPrintAuthenticationHandler {
         final AppCompatImageView ivFingerPrint = alertDialog.findViewById(R.id.ivFingerPrint);
         ivFingerPrint.setBackgroundTintList(ColorStateList.valueOf(Color.BLACK));
 
-        fingerprintHandler = new FingerprintHandler(fragmentActivity, new FingerprintHandler.FingerprintHandlerEvents() {
+        fingerprintHandler = new BiometricHandler(fragmentActivity, new BiometricHandler.BiometricHandlerEvents() {
             @Override
             public void onAuthSuccess() {
                 ivFingerPrint.setColorFilter(ContextCompat.getColor(fragmentActivity, R.color.authentication_success), android.graphics.PorterDuff.Mode.MULTIPLY);
@@ -101,7 +112,7 @@ public class FingerPrintAuthenticationHandler {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        fingerPrintAuthenticationHandlerEvents.onAuthenticationSuccess();
+                        biometricAuthenticationHandlerEvents.onAuthenticationSuccess();
                         alertDialog.dismiss();
                     }
                 }, 500);
@@ -111,7 +122,7 @@ public class FingerPrintAuthenticationHandler {
             public void onAuthFailed() {
                 ivFingerPrint.setColorFilter(ContextCompat.getColor(fragmentActivity, R.color.authentication_failed), android.graphics.PorterDuff.Mode.MULTIPLY);
                 vibrator.vibrate(100);
-                fingerPrintAuthenticationHandlerEvents.onAuthenticationFailed();
+                biometricAuthenticationHandlerEvents.onAuthenticationFailed();
             }
 
             @Override
@@ -129,7 +140,7 @@ public class FingerPrintAuthenticationHandler {
             public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
                 super.onAuthenticationError(errorCode, errString);
                 if (errorCode != BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
-                    fingerPrintAuthenticationHandlerEvents.onAuthenticationFailed();
+                    biometricAuthenticationHandlerEvents.onAuthenticationFailed();
                 }
             }
 
@@ -138,7 +149,7 @@ public class FingerPrintAuthenticationHandler {
                 super.onAuthenticationSucceeded(result);
                 fragmentActivity.runOnUiThread(new Runnable() {
                     public void run() {
-                        fingerPrintAuthenticationHandlerEvents.onAuthenticationSuccess();
+                        biometricAuthenticationHandlerEvents.onAuthenticationSuccess();
                     }
                 });
             }
@@ -146,7 +157,7 @@ public class FingerPrintAuthenticationHandler {
             @Override
             public void onAuthenticationFailed() {
                 super.onAuthenticationFailed();
-                fingerPrintAuthenticationHandlerEvents.onAuthenticationFailed();
+                biometricAuthenticationHandlerEvents.onAuthenticationFailed();
             }
         });
         myBiometricPrompt.authenticate(getBiometricPrompt(title, subtitle, description, negativeButtonText));
@@ -176,7 +187,7 @@ public class FingerPrintAuthenticationHandler {
     }
 
 
-    public interface FingerPrintAuthenticationHandlerEvents {
+    public interface BiometricAuthenticationHandlerEvents {
         void onAuthenticationSuccess();
 
         void onAuthenticationFailed();
