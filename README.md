@@ -57,7 +57,7 @@ dependencies {
 }
 ```
 #### This library packs with SDP, SSP libraries, androidx biometric library and GPS, network,vibrator, biometric related permissions. Therefore no need to add below mentioned permissions again and libraires
-##### Do not add below permissions to the manifest file
+##### Below permissions are already included inside the library
 ```XML
 <uses-permission android:name="android.permission.INTERNET" />
 <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
