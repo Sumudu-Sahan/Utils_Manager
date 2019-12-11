@@ -56,7 +56,7 @@ dependencies {
       implementation 'com.github.Sumudu-Sahan:Utils_Manager:1.00.01'
 }
 ```
-#### This library packs with SDP, SSP libraries, androidx biometric library and GPS, network,vibrator, biometric related permissions. Therefore no need to add below mentioned permissions again and libraires
+#### This library packs with SDP, SSP libraries, androidx biometric library and GPS, network,vibrator, biometric related permissions. Therefore no need to add below mentioned permissions again and libraries
 ##### Below permissions are already included inside the library
 ```XML
 <uses-permission android:name="android.permission.INTERNET" />
