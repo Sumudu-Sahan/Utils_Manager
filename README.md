@@ -69,7 +69,7 @@ dependencies {
 <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 <uses-permission android:name="android.permission.VIBRATE" />
 ```
-##### Do not add below dependencies to the app gradle file
+##### below dependencies are already packed with the library
 ```Gradle
 implementation 'androidx.biometric:biometric:1.0.0'
 implementation 'com.intuit.ssp:ssp-android:1.0.6'
