@@ -1,5 +1,5 @@
 # Util_Manager
-Android Library with a collection of Utilization functions + Biometric Authentications
+Android Library with a collection of Util functions and Biometric Authentications
 
 ## What is Util_Manager
 Util_Manager is an android library which can be used to implement biometric authentications, validate data in any android application.
@@ -81,25 +81,26 @@ implementation 'com.intuit.sdp:sdp-android:1.0.6'
 
 ### Biometric Authentication
 ```Java
-BiometricAuthenticationHandler biometricAuthenticationHandler = new BiometricAuthenticationHandler(this, new BiometricAuthenticationHandler.BiometricAuthenticationHandlerEvents() {
+BiometricAuthenticationHandler biometricAuthenticationHandler = new BiometricAuthenticationHandler(fragmentActivity, new BiometricAuthenticationHandler.BiometricAuthenticationHandlerEvents() {
             @Override
             public void onAuthenticationSuccess() {
-                ToastManager.getInstance().showTopToast(MainActivity.this, "Authentication Success", ToastManager.TOP_DURATION_LONG);
+                ToastManager.getInstance().showTopToast(activity, "Authentication Success", ToastManager.TOP_DURATION_LONG);
             }
 
             @Override
             public void onAuthenticationFailed() {
-                ToastManager.getInstance().showTopToast(MainActivity.this, "Authentication Failed", ToastManager.TOP_DURATION_LONG);
+                ToastManager.getInstance().showTopToast(activity, "Authentication Failed", ToastManager.TOP_DURATION_LONG);
             }
 
             @Override
             public void onAuthenticationCancelled() {
-                ToastManager.getInstance().showTopToast(MainActivity.this, "Authentication Cancelled", ToastManager.TOP_DURATION_LONG);
+                ToastManager.getInstance().showTopToast(activity, "Authentication Cancelled", ToastManager.TOP_DURATION_LONG);
             }
         });
 
         biometricAuthenticationHandler.startAuthentication("Title", "SubTitle", "Description", "BTNTEXT", resID); //resID - popup dialog image icon resource
 ```
+
 
 ### Card Number Validation
 ```Java
@@ -125,6 +126,7 @@ CardNumberValidations.CARD_TYPE_CHINA_UNION_PAY - China Union Pay
 CardNumberValidations.CARD_TYPE_UNKNOWN - Invalid Card Type
 ```
 
+
 ### Show Top Bar Toast
 ```Java
 ToastManager.getInstance().showTopToast(activity, "Message", ToastManager.TOP_DURATION_LONG);
@@ -145,6 +147,7 @@ ToastManager.getInstance().showSnackBar(view, "Test Message", "OK", new ToastMan
         });
 ```
 
+
 ### Mobile Number Validations
 ```Java
 MobileManager.getInstance().isValidMobileNumber("+94773606094", true); //if career validation is enabled, mobile number check with current available mobile IPS codes in Sri Lanka
@@ -162,6 +165,7 @@ MobileManager.CAREER_AIRTEL
 MobileManager.CAREER_INVALID
 ```
 
+
 ### Validate NIC Number
 ```Java
 NICManager.getInstance().isValidNICNumber("942490259V"); // This method supports with both old and new formats
@@ -169,6 +173,10 @@ NICManager.getInstance().isValidNICNumber("942490259V"); // This method supports
 ### Get Birthday from NIC
 ```Java
 NICManager.getInstance().getBirthdayFromNIC("199410900877"); // This method supports with both old and new formats
+```
+### Get Birth Year from NIC
+```Java
+NICManager.getInstance().getBirthYearFromNIC("942490259V") // This method supports with both old and new formats
 ```
 ### Get Gender from NIC
 ```Java
@@ -180,6 +188,7 @@ NICManager.GENDER_MALE
 NICManager.GENDER_FEMALE
 ```
 
+
 ### Format Amounts
 ```Java
 AmountManager.getInstance().getFormattedAmount(15548.25);
@@ -189,23 +198,30 @@ AmountManager.getInstance().getFormattedAmount(15548.25);
 AmountManager.getInstance().getDoubleValueOfAmount("15,753.14");
 ```
 
+
 ### Validate Email Address
 ```Java
 EmailManager.getInstance().isValidEmailAddress("sumudusahanmax@gmail.com");
 ```
 
+
 ### Get Current Date in Custom Format
 ```Java
 CalendarUtilsManager.getInstance().getCurrentDateCustomFormat("yyyy-MMM-dd HH:mm:ss");
+```
+### Convert Date String to custom date formats
+```Java
+CalendarUtilsManager.getInstance().convertDateString("dateString", "newFormat", "parsingFormat", "AlternetParsingFormat")
 ```
 ### Get Time Gaps
 ```Java
 CalendarUtilsManager.getInstance().getDuration(System.currentTimeMillis() - CalendarUtilsManager.getInstance().getPreviousDate(3).getTime());
 ```
 
+
 ### Check the availability of the Internet in Device Side (This checks both cellular data and WIFI)
 ```Java
-NetworkManager.getInstance().isInternetOn(this);
+NetworkManager.getInstance().isInternetOn(context);
 ```
 ### Check the availability of the Internet in ISP Side 
 ```Java
@@ -222,9 +238,50 @@ NetworkManager.getInstance().isInternetAvailable(new NetworkManager.NetworkCheck
         });
 ```
 
+
 ### Get App Version
 ```Java
-AppManager.getInstance().getAppVersion(this);
+AppManager.getInstance().getAppVersion(context);
 ```
+### Check App Running Status
+```Java
+AppManager.getInstance().isAppRunning(context, getPackageName())
+```
+
+
+### Get Boolean Preference
+```Java
+SharedPreferenceManager.getInstance().getBooleanPref(context, "PreferenceName", "Key", true);
+SharedPreferenceManager.getInstance().getBooleanPref(context, "Key", true);
+```
+### Get String Preference
+```Java
+SharedPreferenceManager.getInstance().getStringPreference(context, "PreferenceName", "Key", "defaultValue");
+SharedPreferenceManager.getInstance().getStringPreference(context, "Key", "defaultValue");
+```
+### Get Int Preference
+```Java
+SharedPreferenceManager.getInstance().getIntPreference(context, "PreferenceName", "Key", 0);
+SharedPreferenceManager.getInstance().getIntPreference(context, "Key", 0);
+```
+### Put String Value
+```Java
+SharedPreferenceManager.getInstance().putStringPreference(context, "PreferenceName", "Key", "value");
+SharedPreferenceManager.getInstance().putStringPreference(context, "Key", "value");
+```
+### Check Preference Keys
+```Java
+SharedPreferenceManager.getInstance().hasPreference(context, "preferenceName", "key");
+SharedPreferenceManager.getInstance().hasPreference(context, "key");
+```
+##### You can get, add values to the Shared Preference by creating a custom preference by parsing the preference name or get default preference.
+
+
+### Set Recyclerview Item Orientations
+```Java
+RecyclerViewLayoutManager.getInstance().setLayoutManager(context, recyclerview, RecyclerViewLayoutManager.ORIENTATION_VERTICAL);
+```
+
+
 That's it. 
 Happy Coding :smiley: :smiley: :smiley:
