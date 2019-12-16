@@ -47,6 +47,19 @@ public class CardNumberValidations {
         return stringBuilder.toString();
     }
 
+    public String getFormattedCardNumber(String plainCardNumber, int interval, String intervalCharacter) {
+        char[] chars = plainCardNumber.toCharArray();
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int count = 0; count < chars.length; count++) {
+            stringBuilder.append(chars[count]);
+            if ((count + 1) % interval == 0) {
+                stringBuilder.append(intervalCharacter);
+            }
+        }
+
+        return stringBuilder.toString();
+    }
+
     public int getCardTypeFromCardNumber(String cardNumber) {
         if (validateCreditCardNumber(cardNumber)) {
             if (Pattern.matches(PATTERN_VISA, cardNumber)) {

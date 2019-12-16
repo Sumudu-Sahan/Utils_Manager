@@ -5,10 +5,10 @@ android {
     buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "com.ssw.utilsmanagerdemo"
-        minSdkVersion 17
+        minSdkVersion 16
         targetSdkVersion 29
         versionCode 1
-        versionName "1.00.01"
+        versionName "1.00.02"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

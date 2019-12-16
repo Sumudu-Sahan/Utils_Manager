@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.hardware.fingerprint.FingerprintManagerCompat;
 
@@ -193,6 +194,7 @@ public class DeviceManager {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public boolean hasEnrolledFingerprints(Context context) {
         try {
             FingerprintManager fingerprintManager = (FingerprintManager) context.getSystemService(Context.FINGERPRINT_SERVICE);

@@ -33,8 +33,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void initComponents() {
         textView = findViewById(R.id.textView);
-
-        getAppVersion();
     }
 
     // <editor-fold defaultstate="collapsed" desc="App Manager">
