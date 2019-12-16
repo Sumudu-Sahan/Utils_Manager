@@ -53,7 +53,7 @@ allprojects {
 ### Step : 2- Add the dependency
 ```gradle
 dependencies {
-      implementation 'com.github.Sumudu-Sahan:Utils_Manager:1.00.01'
+      implementation 'com.github.Sumudu-Sahan:Utils_Manager:1.00.02'
 }
 ```
 #### This library packs with SDP, SSP libraries, androidx biometric library and GPS, network,vibrator, biometric related permissions. Therefore no need to add below mentioned permissions again and libraries
